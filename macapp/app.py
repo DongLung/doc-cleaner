@@ -460,6 +460,19 @@ _HTML = """<!DOCTYPE html>
       e.preventDefault();
       dz.classList.remove('hover');
       document.getElementById('file-count').textContent = _lang === 'zh' ? '讀取中…' : 'Loading…';
+      // Windows/WebView2 only: pywebview fills its drop-path store natively on
+      // macOS (cocoa performDragOperation), but on EdgeChromium the paths are
+      // captured only when JS posts 'FilesDropped' with the dropped File
+      // objects (see pywebview js/api.js + edgechromium.on_script_notify).
+      // Post it here so get_dropped_paths() below sees the paths (issue #6).
+      // Same WebMessage channel as the api call → processed first, no race.
+      if (window.chrome && window.chrome.webview &&
+          typeof window.chrome.webview.postMessageWithAdditionalObjects === 'function' &&
+          e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+        try {
+          window.chrome.webview.postMessageWithAdditionalObjects('FilesDropped', e.dataTransfer.files);
+        } catch (err) { /* old WebView2 runtime — degrade to no-op, browse still works */ }
+      }
       pywebview.api.get_dropped_paths().then(function(paths) {
         if (paths && paths.length) {
           onDropPaths(paths);

@@ -521,6 +521,31 @@ class TestOnResultWiring:
         assert "btn.dataset.path = result.output;" in html
 
 
+class TestDropWiringWindows:
+    """Static pin of the WebView2 drop bridge (issue #6).
+
+    On EdgeChromium, pywebview only captures dropped-file paths when JS posts
+    'FilesDropped' with the File objects; the front-end must do so before
+    calling get_dropped_paths(), or the bridge returns [] on Windows.
+    """
+
+    def test_posts_filesdropped_before_bridge_call(self):
+        import macapp.app as appmod
+        html = appmod._HTML
+        post = html.index(
+            "window.chrome.webview.postMessageWithAdditionalObjects('FilesDropped', e.dataTransfer.files)"
+        )
+        call = html.index("pywebview.api.get_dropped_paths()")
+        assert post < call
+
+    def test_gated_on_webview2_presence(self):
+        import macapp.app as appmod
+        assert (
+            "typeof window.chrome.webview.postMessageWithAdditionalObjects === 'function'"
+            in appmod._HTML
+        )
+
+
 class TestSetLang:
     """Language persistence bridge (route-pdf-tables-native)."""
 

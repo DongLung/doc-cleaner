@@ -17,6 +17,10 @@ __pycache__/
 venv/
 .pytest_cache/
 
+# Patch byproducts
+*.rej
+*.orig
+
 # macOS
 .DS_Store
 
