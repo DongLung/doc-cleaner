@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
 """
 Build the final DMG with both the .app and the ReadMe.txt visible.
-Run after the app is built and ad-hoc signed:
-    briefcase update macOS
-    codesign --force --deep --sign - "build/macapp/macos/app/Doc Cleaner.app"
+
+For a release, do NOT run this directly: scripts/sign_and_notarize_macos.sh calls it at
+the right point in the signing chain. The .app must already be signed *and* have its
+notarization ticket stapled before the DMG is built, because the DMG cannot be touched
+afterwards without invalidating its own signature and ticket.
+
+Release flow (full runbook in .claude/skills/release-runbook, Step 3):
+    briefcase create macOS --no-input && briefcase build macOS --no-input
+    briefcase package macOS -p zip --no-input -i "<Developer ID identity>" --no-notarize
+    scripts/sign_and_notarize_macos.sh
+
+Running this script on its own only makes sense for an unsigned local test build.
 (`briefcase build --adhoc-sign` does not exist; the flag belongs to `briefcase package`.)
 """
 import sys
@@ -21,7 +30,7 @@ with open(ROOT / "pyproject.toml", "rb") as _f:
 OUT = ROOT / f"dist/Doc Cleaner-{_VERSION}.dmg"
 
 if not APP.exists():
-    sys.exit(f"ERROR: .app not found at {APP}\nRun: briefcase update macOS  # then codesign --force --deep --sign -")
+    sys.exit(f"ERROR: .app not found at {APP}\nRun: briefcase create macOS --no-input && briefcase build macOS --no-input")
 
 if not README.exists():
     sys.exit(f"ERROR: ReadMe.txt not found at {README}")
