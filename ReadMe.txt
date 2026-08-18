@@ -1,4 +1,4 @@
-Doc Cleaner v1.7.0
+Doc Cleaner v1.7.1
 ==================
 
 文件清洗工具——將各種文件轉換為 Markdown 格式。
@@ -44,18 +44,11 @@ Doc Cleaner v1.7.0
 
 【首次開啟 App】
 
-此 App 尚未通過 Apple 公證，首次開啟時 macOS 會顯示安全性警告。
-以下依 macOS 版本說明解決方式：
+本版已使用 Apple Developer ID 憑證簽章並通過 Apple 公證，
+下載後直接雙擊即可開啟，不需要右鍵開啟，也不需要調整安全性設定。
 
-▸ macOS 13 Ventura 及以前
-  在 App 圖示上按右鍵（或 Control+點一下）→ 選「開啟」
-  在跳出的對話框中再按一次「開啟」即可
-
-▸ macOS 14 Sonoma / macOS 15 Sequoia（推薦）
-  系統設定 → 隱私權與安全性 → 往下滑
-  找到「Doc Cleaner」→ 點「仍要開啟」
-
-確認一次後，之後每次開啟都正常，不會再詢問。
+（v1.7.0 及更早的版本未經公證，首次開啟會顯示安全性警告；
+　手上若是舊版，建議改用最新版。）
 
 
 【注意事項】
@@ -71,7 +64,7 @@ Doc Cleaner v1.7.0
 ====================================================================
 
 
-Doc Cleaner v1.7.0
+Doc Cleaner v1.7.1
 ==================
 
 A document-cleaning tool — converts various documents to Markdown.
@@ -118,18 +111,12 @@ Plain-text extraction. No AI, no network, no configuration.
 
 [First launch]
 
-This app is not yet notarized by Apple, so macOS shows a security warning the
-first time you open it. By macOS version:
+This build is signed with an Apple Developer ID certificate and notarized by
+Apple, so it opens directly after you download it. No right-click trick, no
+security-settings override.
 
-▸ macOS 13 Ventura and earlier
-  Right-click (or Control-click) the app icon → choose "Open"
-  Click "Open" again in the dialog
-
-▸ macOS 14 Sonoma / macOS 15 Sequoia (recommended)
-  System Settings → Privacy & Security → scroll down
-  Find "Doc Cleaner" → click "Open Anyway"
-
-After confirming once, it opens normally every time afterwards.
+(Builds up to v1.7.0 were not notarized and did show a security warning on
+first launch. If you have an older build, download the latest one instead.)
 
 
 [Notes]

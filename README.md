@@ -18,12 +18,12 @@
 
 | 平台 | 下載 | 架構 |
 |------|------|------|
-| **macOS** | [Doc Cleaner-1.7.0.dmg](https://github.com/notoriouslab/doc-cleaner/releases/download/v1.7.0/Doc.Cleaner-1.7.0.dmg) | Universal（Intel + Apple Silicon） |
-| **Windows** | [Doc Cleaner-1.7.0.msi](https://github.com/notoriouslab/doc-cleaner/releases/download/v1.7.0/Doc.Cleaner-1.7.0.msi) | x86_64（含 ARM Windows） |
+| **macOS** | [Doc Cleaner-1.7.1.dmg](https://github.com/notoriouslab/doc-cleaner/releases/download/v1.7.1/Doc.Cleaner-1.7.1.dmg) | Universal（Intel + Apple Silicon） |
+| **Windows** | [Doc Cleaner-1.7.1.msi](https://github.com/notoriouslab/doc-cleaner/releases/download/v1.7.1/Doc.Cleaner-1.7.1.msi) | x86_64（含 ARM Windows） |
 
-> 首次開啟 macOS 版：右鍵 → 開啟（Ventura 以前）或系統設定 → 隱私權與安全性 → 仍要開啟（Sonoma/Sequoia）
+> macOS 版已使用 Apple Developer ID 憑證簽章並通過 Apple 公證，下載後直接雙擊開啟即可，不需要右鍵開啟或調整安全性設定
 >
-> 或在 Terminal 執行一次：`xattr -cr /Applications/Doc\ Cleaner.app`
+> （v1.7.0 及更早的版本未經公證，首次開啟會顯示安全性警告）
 
 </div>
 

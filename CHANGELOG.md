@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.7.1
+
+### Fixes
+
+- **Windows drag-and-drop** (#6, reported by @katiboy): dropping files onto the window silently did nothing on Windows — you had to use the browse button instead. pywebview's EdgeChromium backend only records dropped paths when the page posts a `FilesDropped` message, which the macOS backend does natively; our drop handler asked for the paths without ever posting it, so it always got an empty list. Affected every Windows build since 1.3.0
+
+### Distribution
+
+- **macOS builds are now signed with a Developer ID certificate and notarized by Apple.** Every dmg up to 1.7.0 was ad-hoc signed, so Gatekeeper refused to open it without a manual override. 1.7.1 opens directly after download, with no workaround
+
 ## v1.7.0
 
 ### New Features

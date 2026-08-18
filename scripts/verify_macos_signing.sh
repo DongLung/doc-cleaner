@@ -7,9 +7,9 @@
 #   unsigned → 負向對照，對 adhoc／未簽章產物跑，證明斷言不是恆真
 #              （發布當天才第一次執行的腳本等於沒有防線）
 #
-# 用法：
-#   scripts/verify_macos_signing.sh "dist/Doc Cleaner-1.7.0.dmg" signed
-#   scripts/verify_macos_signing.sh "dist/Doc Cleaner-1.7.0-adhoc-20260707.dmg" unsigned
+# 用法（版號自行代入，範例刻意不寫死以免隨發版過時）：
+#   scripts/verify_macos_signing.sh "dist/Doc Cleaner-<版號>.dmg" signed
+#   scripts/verify_macos_signing.sh "dist/Doc Cleaner-<舊的 adhoc 產物>.dmg" unsigned
 #
 # 刻意要求明確的 DMG 路徑而不自動搜尋 dist/：dist/ 裡有歷史版本 dmg 與
 # hdiutil 留下的 .temp* 中繼映像，任何「找第一顆」的邏輯都可能撿錯檔案。
