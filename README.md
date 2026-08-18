@@ -3,6 +3,7 @@
 # doc-cleaner
 
 [![GitHub release](https://img.shields.io/github/v/release/notoriouslab/doc-cleaner)](https://github.com/notoriouslab/doc-cleaner/releases)
+[![Downloads](https://img.shields.io/github/downloads/notoriouslab/doc-cleaner/total)](https://github.com/notoriouslab/doc-cleaner/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-green.svg)](https://www.python.org/)
 [![Supported Formats](https://img.shields.io/badge/Formats-16-orange.svg)](#支援格式完整表)
