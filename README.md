@@ -26,6 +26,10 @@
 >
 > （v1.7.0 及更早的版本未經公證，首次開啟會顯示安全性警告）
 
+<img src="docs/screenshots/app-main.png" width="560" alt="Doc Cleaner 主畫面：拖放區、輸出位置與輸出格式選項">
+
+<sub>拖進檔案或整個資料夾，選輸出位置與格式，按「轉換」。截圖使用合成的示範文件</sub>
+
 </div>
 
 ---
@@ -104,10 +108,10 @@ python cleaner.py --input ./documents/ --dry-run --verbose
 
 ### 進階安裝（選裝）
 
-高品質 PDF 表格提取、PDF 解密、PPTX/DXF 支援等：
+PDF 長文排版重建、PDF 解密、PPTX/DXF 支援等（表格提取為內建，不需選裝）：
 
 ```bash
-# 高品質 PDF 提取（推薦）
+# 高品質 PDF 排版重建（長文、報告；表格不需要它）
 pip install opendataloader-pdf            # 需要 Java 11+
 
 # PDF 視覺模式（掃描 PDF）
@@ -133,13 +137,18 @@ cp .env.example .env
 
 ### PDF 智慧分流
 
-不是所有 PDF 都一樣。doc-cleaner 自動分類後決定處理策略：
+不是所有 PDF 都一樣。doc-cleaner 先掃有沒有表格，再依內容分類決定策略：
 
-| 類型 | 特徵 | 處理方式 |
+| 判斷 | 特徵 | 處理方式 |
 |------|------|---------|
-| **原生文字** | 字元密度 ≥8，亂碼 <5%，短行 ≤70% | 直接提取（快速、免費） |
-| **格式破碎** | 短行 >70%（表格被壓扁） | opendataloader-pdf 表格提取 / AI 視覺 + 文字 |
+| **含表格** | 內建 `find_tables()` 掃到表格 | PyMuPDF 表格提取 → pipe table（**不走 ODL**） |
+| **原生文字**（無表格） | 字元密度 ≥8，亂碼 <5%，短行 ≤70% | ODL 排版重建，或直接提取 |
+| **格式破碎**（無表格） | 短行 >70% | ODL 排版重建 / AI 視覺 + 文字 |
 | **掃描圖片** | 字元密度 <8 | PDF 轉圖 + AI 視覺處理 |
+
+> 為什麼表格不交給 opendataloader-pdf：實測它會把對帳單的多欄版面壓成單一
+> 儲存格（v1.7.0 修正）。所以有表格的 PDF 一律走內建表格路徑，ODL 只負責
+> 長文的排版重建。
 
 **推薦做法（最省錢）：**
 ```bash
@@ -175,8 +184,14 @@ python cleaner.py --input scanned.pdf --ai gemini
 
 - **DOCX**：`python-docx` 直接提取 → Markdown pipe table
 - **XLSX/CSV**：`pandas.to_markdown()` — 所有工作表
-- **PDF**：opendataloader-pdf 直接輸出完整 pipe table（無需 AI）
+- **PDF**：內建 PyMuPDF `find_tables()` 輸出 pipe table（無需 AI、無需 Java）；
+  跨頁同表自動合併、合併儲存格不重複填值、只有表頭有框線的表格會重建欄位
 - **AI 提示詞**：明確指示保留現有表格原樣
+
+<img src="docs/screenshots/app-preview.png" width="520" alt="轉後預覽：PDF 帳單的表格轉成 Markdown 後仍是完整表格">
+
+轉後預覽（桌面 App）：PDF 帳單裡的消費明細表，轉成 Markdown 之後照樣是表格。
+上圖為合成的示範帳單，商店名稱與金額皆為虛構。
 
 ### 隱私和安全
 
@@ -320,7 +335,7 @@ python cleaner.py --input document.pdf --ai none --summary
 
 `--summary` 輸出：
 ```json
-{"version":"1.0.0","total":1,"success":1,"failed":0,"files":[{"file":"document.pdf","output":"./output/document.md","status":"ok"}]}
+{"version":"1.7.1","total":1,"success":1,"failed":0,"files":[{"file":"document.pdf","output":"./output/document.md","status":"ok"}]}
 ```
 
 ### notoriouslab 組合拳

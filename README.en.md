@@ -26,6 +26,10 @@ Part of the [notoriouslab](https://github.com/notoriouslab) open-source toolkit 
 >
 > (Builds up to v1.7.0 were not notarized and did show a warning on first launch)
 
+<img src="docs/screenshots/app-main.png" width="560" alt="Doc Cleaner main window: drop zone, output location and output format options">
+
+<sub>Drop in files or a whole folder, pick the output location and format, hit Convert. Screenshot uses synthetic demo documents</sub>
+
 </div>
 
 ---
@@ -103,10 +107,11 @@ python cleaner.py --input ./documents/ --dry-run --verbose
 
 ### Optional Advanced Install
 
-High-quality PDF table extraction, decryption, PPTX/DXF/EPUB support, etc.:
+PDF prose layout reconstruction, decryption, PPTX/DXF/EPUB support, etc.
+(table extraction is built in and needs no optional install):
 
 ```bash
-# High-quality PDF extraction (recommended)
+# High-quality PDF prose layout reconstruction (tables do not need this)
 pip install opendataloader-pdf            # Requires Java 11+
 
 # PDF vision mode (scanned PDFs)
@@ -115,8 +120,8 @@ pip install pdf2image                     # Also requires: brew install poppler
 # PDF decryption
 pip install pikepdf
 
-# Extra formats (PPTX / DXF / EPUB typesetting)
-pip install python-pptx ezdxf markdown
+# Extra formats (PPTX / DXF)
+pip install python-pptx ezdxf
 ```
 
 Set API keys (if using cloud backend):
@@ -133,13 +138,18 @@ cp .env.example .env
 
 ### Smart PDF Triage
 
-Not all PDFs are equal. doc-cleaner auto-classifies before processing:
+Not all PDFs are equal. doc-cleaner scans for tables first, then classifies:
 
-| Type | Characteristics | Strategy |
-|------|-----------------|----------|
-| **Native text** | char density ≥8, garbage <5%, short lines ≤70% | Direct extraction (fast, free) |
-| **Layout-broken** | >70% short lines (tables crushed) | opendataloader-pdf table extraction / AI vision + text |
+| Decision | Characteristics | Strategy |
+|----------|-----------------|----------|
+| **Has tables** | built-in `find_tables()` finds tables | PyMuPDF table extraction → pipe tables (**bypasses ODL**) |
+| **Native text** (no tables) | char density ≥8, garbage <5%, short lines ≤70% | ODL layout reconstruction, or direct extraction |
+| **Layout-broken** (no tables) | >70% short lines | ODL layout reconstruction / AI vision + text |
 | **Scanned images** | char density <8 | PDF-to-image + AI vision |
+
+> Why tables bypass opendataloader-pdf: measured against real statements, ODL
+> collapses multi-column layouts into a single cell (fixed in v1.7.0). Table-bearing
+> PDFs therefore always take the built-in table path; ODL handles prose layout only.
 
 **Cost-effective workflow:**
 ```bash
@@ -175,8 +185,16 @@ Tables are first-class citizens:
 
 - **DOCX**: `python-docx` extracts directly → Markdown pipe tables
 - **XLSX/CSV**: `pandas.to_markdown()` — all sheets preserved
-- **PDF**: opendataloader-pdf produces proper pipe tables (no AI needed)
+- **PDF**: built-in PyMuPDF `find_tables()` produces pipe tables (no AI, no Java);
+  tables continuing across pages are merged, merged cells are not duplicated,
+  and header-only-gridline tables get their columns rebuilt
 - **AI prompt**: explicitly instructs to keep existing tables unchanged
+
+<img src="docs/screenshots/app-preview.png" width="520" alt="Post-conversion preview: a PDF statement table stays a real table in Markdown">
+
+Post-conversion preview (desktop app): the transaction table from a PDF statement
+is still a table after conversion. The statement above is synthetic; merchant names
+and amounts are fictional.
 
 ### Privacy and Security
 
@@ -320,7 +338,7 @@ python cleaner.py --input document.pdf --ai none --summary
 
 `--summary` output:
 ```json
-{"version":"1.0.0","total":1,"success":1,"failed":0,"files":[{"file":"document.pdf","output":"./output/document.md","status":"ok"}]}
+{"version":"1.7.1","total":1,"success":1,"failed":0,"files":[{"file":"document.pdf","output":"./output/document.md","status":"ok"}]}
 ```
 
 ### notoriouslab Pipeline
