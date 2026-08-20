@@ -37,7 +37,9 @@ jobs:
         # and skips (visibly, in the report) when it did not. The textutil
         # filter mirrors build-windows.yml; those tests also carry skipif Darwin.
         run: |
-          python -m pytest tests/ -q \
+          # -rs prints skip reasons: a green run must still show what it did
+          # not cover (missing fixture, absent optional dep, platform guard).
+          python -m pytest tests/ -q -rs \
             -k "not textutil and not Darwin"
 
   lint:
