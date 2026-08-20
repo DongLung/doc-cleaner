@@ -13,7 +13,7 @@
 
 屬於 [notoriouslab](https://github.com/notoriouslab) 開源工具組的一員 · 需要 Python 3.9+
 
-[English README](README.en.md)
+[English README](README.en.md) · [下載頁](https://notoriouslab.github.io/doc-cleaner/)（一頁式說明與下載，給不熟 GitHub 的使用者）
 
 ### 下載桌面 App（無需 Python）
 

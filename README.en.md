@@ -13,7 +13,7 @@
 
 Part of the [notoriouslab](https://github.com/notoriouslab) open-source toolkit · Requires Python 3.9+
 
-[中文 README](README.md)
+[中文 README](README.md) · [Landing page](https://notoriouslab.github.io/doc-cleaner/) (one-page overview and download, for non-GitHub users)
 
 ### Download Desktop App (no Python required)
 
