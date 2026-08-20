@@ -26,7 +26,46 @@ import logging
 import tempfile
 from pathlib import Path
 
-__version__ = "1.2.0"
+
+def _extract_version_regex(text):
+    """Scan pyproject.toml text for the first `version = "..."` literal.
+
+    Fallback for Python 3.9/3.10, which have no tomllib (the project supports
+    3.9+). `[tool.briefcase]` is the first table in the file, so its version is
+    the first match. Returns None when no version literal is present.
+    """
+    m = re.search(r'^\s*version\s*=\s*"([^"]+)"', text, re.MULTILINE)
+    return m.group(1) if m else None
+
+
+def _extract_version(text):
+    """Return the briefcase version from pyproject.toml text, or None."""
+    try:
+        import tomllib
+        return tomllib.loads(text)["tool"]["briefcase"]["version"]
+    except Exception:
+        # No tomllib (< 3.11), or the table was renamed/malformed. Reporting a
+        # wrong version is worse than a cheap scan, so fall through.
+        return _extract_version_regex(text)
+
+
+def _read_version():
+    """Version single source of truth: pyproject.toml `[tool.briefcase]`.
+
+    Mirrors macapp._read_version() so the CLI and the App report the same
+    number; the version was previously hardcoded here and silently went five
+    releases stale. 'unknown' when pyproject.toml is unreachable (e.g. this
+    file copied out on its own) — never a hardcoded number, which would just
+    recreate the second source of truth.
+    """
+    try:
+        text = (Path(__file__).parent / "pyproject.toml").read_text(encoding="utf-8")
+    except OSError:
+        return "unknown"
+    return _extract_version(text) or "unknown"
+
+
+__version__ = _read_version()
 
 logger = logging.getLogger("doc-cleaner")
 
