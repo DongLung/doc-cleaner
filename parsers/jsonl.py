@@ -8,7 +8,7 @@ Handles text, tool_use (summary), thinking (collapsible), and tool_result
 import json
 import logging
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 

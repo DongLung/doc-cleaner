@@ -416,13 +416,13 @@ def create_epub_archive(title, content_html, summary="", tags=None, source_path=
         if summary or source_path or tags:
             body_parts.append('<div class="metadata-block">')
             if source_path:
-                body_parts.append(f'  <div class="metadata-title">Source File</div>')
+                body_parts.append('  <div class="metadata-title">Source File</div>')
                 body_parts.append(f'  <div class="metadata-value">{xml_esc(source_path)}</div>')
             if summary:
-                body_parts.append(f'  <div class="metadata-title">Summary</div>')
+                body_parts.append('  <div class="metadata-title">Summary</div>')
                 body_parts.append(f'  <div class="metadata-value">{xml_esc(summary)}</div>')
             if tags:
-                body_parts.append(f'  <div class="metadata-title">Tags</div>')
+                body_parts.append('  <div class="metadata-title">Tags</div>')
                 tag_spans = "".join(f'<span class="tag">{xml_esc(t)}</span>' for t in tags)
                 body_parts.append(f'  <div class="metadata-value">{tag_spans}</div>')
             body_parts.append('</div>')

@@ -1,0 +1,59 @@
+name: Tests
+
+# The suite previously ran only on release tags (build-windows.yml), so a
+# regression stayed invisible until packaging day. Run it on every push and PR.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'   # matches build-windows.yml
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pytest
+          # Same optional extras as build-windows.yml, so this job does not go
+          # green by skipping the DXF/PPTX suites.
+          pip install ezdxf "python-pptx>=0.6.21,<1.0.0" pikepdf
+          # pywebview lets the 40 Python-JS bridge tests run here too. If it
+          # cannot import on a headless runner, test_macapp.py's
+          # pytest.importorskip skips the module instead of failing the job.
+          pip install pywebview || echo "pywebview unavailable; bridge tests will skip"
+
+      - name: Run unit tests
+        # No --ignore for test_macapp.py: it guards itself with
+        # pytest.importorskip("webview"), so it runs when pywebview installed
+        # and skips (visibly, in the report) when it did not. The textutil
+        # filter mirrors build-windows.yml; those tests also carry skipif Darwin.
+        run: |
+          python -m pytest tests/ -q \
+            -k "not textutil and not Darwin"
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install ruff
+        # Pinned: a ruff upgrade can introduce rules and turn this red without
+        # any code change. Bump deliberately.
+        run: pip install ruff==0.15.12
+
+      - name: Lint
+        # Config (exclusions, per-file ignores) lives in pyproject.toml.
+        run: ruff check .

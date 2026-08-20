@@ -554,7 +554,7 @@ def process_file(filepath, ai_backend, prompt, config, output_dir, output_format
 
             # Graceful degradation: if JSON repair failed badly, fall back to raw mode
             if data.get("status") == "partial_recovery" and text:
-                logger.warning(f"  AI JSON output corrupted — falling back to raw mode")
+                logger.warning("  AI JSON output corrupted — falling back to raw mode")
                 data = None
             elif pii_enabled:
                 from classifiers.pii import redact as redact_pii

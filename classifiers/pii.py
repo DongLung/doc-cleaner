@@ -46,7 +46,6 @@ def _mask_mobile(m):
 
 def _mask_landline(m):
     """02-1234-5678 → 02-****-****"""
-    v = m.group(0)
     # Extract area code (digits before first separator or first 2-3 digits)
     area = m.group("area")
     return area + "-****-****"

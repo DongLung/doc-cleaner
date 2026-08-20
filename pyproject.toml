@@ -70,3 +70,13 @@ requires = []
 requires = []
 # numpy: pin to a version with win_amd64 wheels for Python 3.12
 # (pandas==2.2.3 is already pinned in the app-level requires above)
+
+[tool.ruff]
+# build/ and dist/ hold vendored third-party code and packaged output. ruff
+# already skips them via .gitignore; state it so a local run without git agrees.
+extend-exclude = ["build", "dist"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests import project modules after a `pytest.importorskip` guard, so those
+# imports legitimately sit below executable statements.
+"tests/*" = ["E402"]

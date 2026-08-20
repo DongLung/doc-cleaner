@@ -1,5 +1,4 @@
 """Tests for Group 2 parser fixes: absolute textutil path + .xls xlrd engine."""
-import os
 import platform
 import pytest
 from pathlib import Path
@@ -35,19 +34,27 @@ class TestTextutilAbsolutePath:
         )
 
     def test_doc_succeeds_with_minimal_path(self, tmp_path):
-        """Conversion succeeds even when PATH contains only /usr/bin."""
+        """DOC conversion does not depend on PATH: it invokes textutil absolutely.
+
+        The invocation is what makes a stripped PATH survivable, so that is what
+        this asserts. (It previously built a `minimal_env` with PATH=/usr/bin and
+        never applied it; applying it would prove nothing either, since
+        subprocess.run is mocked and PATH never participates.)
+        """
         from parsers._textutil import convert_to_text
 
         dummy = str(tmp_path / "test.doc")
         Path(dummy).write_bytes(b"dummy")
 
-        minimal_env = {**os.environ, "PATH": "/usr/bin"}
         with patch("parsers._textutil.subprocess.run",
                    side_effect=self._make_run_side_effect(tmp_path, "doc content")) as mock_run:
             result = convert_to_text(dummy, "DOC")
 
         assert result == "doc content"
-        assert mock_run.called
+        cmd = mock_run.call_args[0][0]
+        assert cmd[0] == "/usr/bin/textutil", (
+            f"Expected an absolute textutil path, got {cmd[0]!r}"
+        )
 
     def test_ppt_succeeds_with_minimal_path(self, tmp_path):
         """PPT conversion uses the same absolute path and succeeds."""
@@ -78,7 +85,7 @@ class TestXlsXlrdEngine:
 
         fake_df = pd.DataFrame({"A": [1, 2], "B": [3, 4]})
         with patch("pandas.read_excel", return_value={"Sheet1": fake_df}) as mock_read:
-            result = parse(dummy_xls)
+            parse(dummy_xls)  # return value unused: this asserts the call args
 
         _, kwargs = mock_read.call_args
         assert kwargs.get("engine") == "xlrd", (

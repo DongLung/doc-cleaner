@@ -142,7 +142,7 @@ def _read_metadata(opf):
     """Return (title, creator) from OPF Dublin Core metadata; '' if absent."""
     def first(tag):
         vals = opf.xpath(
-            f"//*[local-name()='metadata']/*[local-name()=$t]/text()", t=tag
+            "//*[local-name()='metadata']/*[local-name()=$t]/text()", t=tag
         )
         return vals[0].strip() if vals else ""
     return first("title"), first("creator")
